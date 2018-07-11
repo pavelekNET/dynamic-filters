@@ -1,0 +1,65 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<mat-accordion multi="true">
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>Sloupce</mat-expansion-panel-header>
+    <ul style="list-style: none;">
+      <li *ngFor="let sColumn of selectedColumns; let i = index">
+        <mat-form-field>
+          <mat-select placeholder="Sloupec" [(ngModel)]="selectedColumns[i]" (selectionChange)="columnSelected($event)">
+            <mat-option *ngFor="let column of columns" [value]="column">
+              {{column.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="warn" style="margin-left: 15px;" (click)="removeColumn(sColumn)">Odebrat</button>
+      </li>
+    </ul>
+    <p>
+      <button mat-fab color="primary" (click)="addColumn()">Přidat</button>
+    </p>
+  </mat-expansion-panel>
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>Filtry</mat-expansion-panel-header>
+    <ul style="list-style: none;">
+      <li *ngFor="let sFilter of selectedFilters">
+        <mat-form-field class="form-gutter">
+          <mat-select placeholder="Sloupec" [(ngModel)]="sFilter.column">
+            <mat-option *ngFor="let column of columns" [value]="column">
+              {{column.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="form-gutter">
+          <mat-select placeholder="Operátor" [(ngModel)]="sFilter.operator">
+            <mat-option *ngFor="let operator of sFilter.column.operators" [value]="operator.odataOperator">
+              {{operator.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="form-gutter">
+          <input matInput placeholder="Hodnota" [(ngModel)]="sFilter.value" />
+        </mat-form-field>
+        <button mat-raised-button color="warn" style="margin-left: 15px;" (click)="removeFilter(sFilter)">Odebrat</button>
+      </li>
+    </ul>
+    <p>
+      <button mat-fab color="primary" (click)="addFilter()">Přidat</button>
+    </p>
+    <p>
+      <button mat-raised-button color="primary" (click)="applyFilters()">Aplikovat filtry</button>
+    </p>
+  </mat-expansion-panel>
+  <!--<mat-expansion-panel>-->
+  <!--<mat-expansion-panel-header>Řazení</mat-expansion-panel-header>-->
+  <!--</mat-expansion-panel>-->
+</mat-accordion>
+<table style="margin-top: 50px;" *ngIf="selectedColumns[0].columnDef" mat-table [dataSource]="agents$ | async" class="mat-elevation-z8">
+  <ng-container *ngFor="let column of selectedColumns" [matColumnDef]="column.columnDef">
+    <th mat-header-cell *matHeaderCellDef>{{column.name}}</th>
+    <td mat-cell *matCellDef="let element">{{element[column.columnDef]}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
